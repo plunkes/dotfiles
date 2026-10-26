@@ -1,0 +1,14 @@
+# /etc/greetd/config.toml — tuigreet login on tty1, launches Sway.
+[terminal]
+vt = 1
+
+[default_session]
+user = "greeter"
+command = """tuigreet \
+  --cmd sway \
+  --time --time-format '%a %d %b  %H:%M' \
+  --remember --remember-user-session \
+  --asterisks --asterisks-char '•' \
+  --greeting 'welcome back' \
+  --width 50 --window-padding 2 --container-padding 2 \
+  --theme 'border=magenta;title=magenta;greet=cyan;text=white;prompt=green;input=yellow;time=cyan;action=blue;button=magenta'"""

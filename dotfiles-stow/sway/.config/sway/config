@@ -1,0 +1,159 @@
+# Sway config — i3-style keys. Docs: man 5 sway
+set $mod Mod4
+set $left h
+set $down j
+set $up k
+set $right l
+set $term kitty
+set $menu fuzzel
+
+# --- colors: defaults, overridden by the file `wall` generates from the wallpaper ---
+set $accent    #8caaee
+set $accent_fg #1a1b26
+set $bg        #121318
+set $bg_alt    #1e1f25
+set $fg        #e3e1e9
+set $muted     #45464f
+set $urgent    #ffb4ab
+set $lock_bg   121318
+include ~/.config/sway/colors
+set $lock swaylock -f -c $lock_bg
+
+# --- output / input ---
+# Wallpaper is drawn by awww (no swaybg); change it with `wall` (Super+Shift+w).
+# Monitors (HDMI) are handled by kanshi: ~/.config/kanshi/config
+
+input type:keyboard {
+    xkb_layout br
+    xkb_variant abnt2
+    repeat_delay 250
+    repeat_rate 35
+}
+input type:touchpad {
+    tap enabled
+    natural_scroll enabled
+    dwt enabled
+}
+
+# --- look ---
+default_border pixel 2
+gaps inner 6
+smart_gaps on
+font pango:JetBrainsMono Nerd Font 10
+#                       border   background text       indicator child_border
+client.focused          $accent  $accent    $accent_fg $accent   $accent
+client.focused_inactive $bg_alt  $bg_alt    $fg        $muted    $muted
+client.unfocused        $bg      $bg        $fg        $muted    $muted
+client.urgent           $urgent  $urgent    $bg        $urgent   $urgent
+
+# --- autostart ---
+exec swayidle -w \
+    timeout 300 '$lock' \
+    timeout 600 'swaymsg "output * power off"' resume 'swaymsg "output * power on"' \
+    before-sleep '$lock'
+exec mkdir -p ~/Pictures/Screenshots
+exec awww-daemon
+exec ~/.local/bin/wall restore
+exec mako
+exec kanshi
+exec /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
+
+# --- apps ---
+bindsym $mod+Return exec $term
+bindsym $mod+d exec $menu
+bindsym $mod+e exec $term -e yazi
+bindsym $mod+b exec librewolf
+bindsym $mod+Escape exec $lock
+# Wallpaper: picker / next / random (recolors everything)
+bindsym $mod+Shift+w exec kitty --class wall-picker -e ~/.local/bin/wall
+bindsym $mod+Shift+n exec ~/.local/bin/wall next
+bindsym $mod+Shift+r exec ~/.local/bin/wall random
+bindsym $mod+q kill
+bindsym $mod+Shift+c reload
+bindsym $mod+Shift+e exec swaynag -t warning -m 'Exit sway?' -B 'Exit' 'swaymsg exit'
+
+# Screenshots: region -> annotate (satty), full screen -> file
+bindsym Print exec grim -g "$(slurp)" - | satty --filename - --output-filename ~/Pictures/Screenshots/%Y%m%d-%H%M%S.png
+bindsym Shift+Print exec grim ~/Pictures/Screenshots/$(date +%Y%m%d-%H%M%S).png
+
+# Media / brightness
+bindsym XF86AudioRaiseVolume exec wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+
+bindsym XF86AudioLowerVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
+bindsym XF86AudioMute exec wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
+bindsym XF86AudioMicMute exec wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle
+bindsym XF86AudioPlay exec playerctl play-pause
+bindsym XF86AudioNext exec playerctl next
+bindsym XF86AudioPrev exec playerctl previous
+bindsym XF86MonBrightnessUp exec brightnessctl set 5%+
+bindsym XF86MonBrightnessDown exec brightnessctl set 5%-
+
+# --- focus / move ---
+bindsym $mod+$left focus left
+bindsym $mod+$down focus down
+bindsym $mod+$up focus up
+bindsym $mod+$right focus right
+bindsym $mod+Shift+$left move left
+bindsym $mod+Shift+$down move down
+bindsym $mod+Shift+$up move up
+bindsym $mod+Shift+$right move right
+
+# --- workspaces ---
+bindsym $mod+1 workspace number 1
+bindsym $mod+2 workspace number 2
+bindsym $mod+3 workspace number 3
+bindsym $mod+4 workspace number 4
+bindsym $mod+5 workspace number 5
+bindsym $mod+6 workspace number 6
+bindsym $mod+7 workspace number 7
+bindsym $mod+8 workspace number 8
+bindsym $mod+9 workspace number 9
+bindsym $mod+0 workspace number 10
+bindsym $mod+Shift+1 move container to workspace number 1
+bindsym $mod+Shift+2 move container to workspace number 2
+bindsym $mod+Shift+3 move container to workspace number 3
+bindsym $mod+Shift+4 move container to workspace number 4
+bindsym $mod+Shift+5 move container to workspace number 5
+bindsym $mod+Shift+6 move container to workspace number 6
+bindsym $mod+Shift+7 move container to workspace number 7
+bindsym $mod+Shift+8 move container to workspace number 8
+bindsym $mod+Shift+9 move container to workspace number 9
+bindsym $mod+Shift+0 move container to workspace number 10
+# Move workspace to the external monitor
+bindsym $mod+Ctrl+$left move workspace to output left
+bindsym $mod+Ctrl+$right move workspace to output right
+
+# --- layout ---
+bindsym $mod+v splitv
+bindsym $mod+c splith
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+t layout toggle split
+bindsym $mod+f fullscreen
+bindsym $mod+Shift+space floating toggle
+bindsym $mod+space focus mode_toggle
+bindsym $mod+minus scratchpad show
+bindsym $mod+Shift+minus move scratchpad
+floating_modifier $mod normal
+
+mode "resize" {
+    bindsym $left resize shrink width 20px
+    bindsym $down resize grow height 20px
+    bindsym $up resize shrink height 20px
+    bindsym $right resize grow width 20px
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+bindsym $mod+r mode "resize"
+
+# --- rules ---
+for_window [app_id="satty"] floating enable
+for_window [app_id="wall-picker"] floating enable, resize set 1400 800, move position center
+for_window [app_id="wdisplays"] floating enable
+for_window [window_role="pop-up"] floating enable
+
+bar {
+    swaybar_command waybar
+}
+
+# Arch defaults: exports WAYLAND_DISPLAY etc. to systemd/dbus (needed by portals, screen sharing)
+include /etc/sway/config.d/*

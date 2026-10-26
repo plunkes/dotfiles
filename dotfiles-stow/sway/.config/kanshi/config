@@ -1,0 +1,14 @@
+# kanshi — auto-switch monitor layouts on HDMI plug. Docs: man 5 kanshi
+# Find names with: swaymsg -t get_outputs
+profile laptop {
+    output eDP-1 enable mode 1920x1080 position 0,0
+}
+
+# External screen to the right of the laptop.
+profile docked {
+    output eDP-1 enable mode 1920x1080 position 0,0
+    output HDMI-A-1 enable position 1920,0
+}
+
+# For presentations, mirror instead: run `wl-mirror eDP-1` (AUR) or set the
+# same position for both outputs in a profile like this one.

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>dotfiles</title>
+<style>
+  :root {
+    --bg: #faf6f0; --fg: #2a2230; --muted: #75697d; --line: #e6ddd2;
+    --accent: #c2662d; --code: #f1ebe2;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #1a1423; --fg: #e8d5b5; --muted: #a8998c; --line: #33293d;
+            --accent: #ffb86b; --code: #251d30; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 2.5rem 1rem; background: var(--bg); color: var(--fg);
+         font: 15px/1.55 ui-sans-serif, system-ui, sans-serif; }
+  main { max-width: 860px; margin: 0 auto; }
+  h1 { font-size: 1.6rem; margin: 0 0 .25rem; }
+  h2 { font-size: 1.05rem; margin: 2.2rem 0 .6rem; color: var(--accent);
+       text-transform: uppercase; letter-spacing: .06em; }
+  p.sub { color: var(--muted); margin: 0 0 1.5rem; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  code, pre { font-family: "JetBrainsMono Nerd Font", ui-monospace, monospace; font-size: .88em; }
+  code { background: var(--code); padding: .1em .35em; border-radius: 4px; }
+  pre { background: var(--code); padding: .8rem 1rem; border-radius: 6px; overflow-x: auto; margin: .4rem 0 1rem; }
+  pre code { background: none; padding: 0; }
+  .table { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  td, th { text-align: left; padding: .4rem .6rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 500; font-size: .85em; }
+  td:first-child { color: var(--muted); white-space: nowrap; font-size: .9em; }
+  td:nth-child(2) { white-space: nowrap; font-weight: 600; }
+  ol { padding-left: 1.3rem; }
+  ol li { margin: .35rem 0; }
+</style>
+</head>
+<body>
+<main>
+
+<h1>dotfiles</h1>
+<p class="sub">Arch Linux</p>
+
+<h2>Install</h2>
+<ol>
+  <li>Install Arch with the <a href="https://wiki.archlinux.org/title/Installation_guide">official guide</a>: UEFI, GRUB, Btrfs subvolumes <code>@</code> and <code>@home</code>.</li>
+  <li>GRUB background lives in <code>grub/lunkes/background.png</code> (<a href="grub/README.md">change it</a>). Desktop wallpapers go in <code>wallpapers/</code>.</li>
+  <li>Run as your user:
+<pre><code>git clone git@github.com:plunkes/dotfiles.git ~/dotfiles
+cd ~/dotfiles && ./install.sh</code></pre></li>
+  <li>Reboot, then:
+<pre><code>sudo tailscale up
+gh auth login && gh ssh-key add ~/.ssh/id_ed25519.pub
+echo 'set -gx VPN_USER &lt;id&gt;' &gt; ~/.config/fish/conf.d/local.fish</code></pre></li>
+</ol>
+
+<div class="table"><table>
+  <tr><th>Step</th><th>Script</th><th>Does</th></tr>
+  <tr><td>00</td><td>bootstrap</td><td>system update, paru</td></tr>
+  <tr><td>01</td><td>packages</td><td><code>packages/pacman.txt</code></td></tr>
+  <tr><td>02</td><td>aur</td><td><code>packages/aur.txt</code> (review PKGBUILDs)</td></tr>
+  <tr><td>03</td><td>grub</td><td>theme, fonts, <code>grub-mkconfig</code></td></tr>
+  <tr><td>04</td><td>swap</td><td>zram + Btrfs swapfile, hibernation resume</td></tr>
+  <tr><td>05</td><td>dotfiles</td><td><code>stow</code> configs into <code>~</code></td></tr>
+  <tr><td>06</td><td>dev</td><td>Rust, Python, Node, groups, fish plugins</td></tr>
+  <tr><td>07</td><td>distrobox-ros2</td><td><code>ros-jazzy</code> container</td></tr>
+  <tr><td>08</td><td>system</td><td>greetd, TLP, services, firewall, SSH key</td></tr>
+  <tr><td>09</td><td>theme</td><td>wallpaper folder, first colors, GTK dark, Spicetify (open Spotify once first)</td></tr>
+</table></div>
+<p class="sub">Resume from a step: <code>./install.sh 05</code>. Each script also runs alone.</p>
+
+<h2>Tools</h2>
+<div class="table"><table>
+  <tr><th>Area</th><th>Tool</th><th>Why</th></tr>
+
+  <tr><td>Boot</td><td><a href="https://www.gnu.org/software/grub/manual/grub/html_node/Theme-file-format.html">GRUB</a></td><td>Themeable; own pixel-art theme kept in the repo</td></tr>
+  <tr><td>Login</td><td><a href="https://github.com/apognu/tuigreet">greetd + tuigreet</a></td><td>Tiny TUI greeter, themable colors, remembers user and session</td></tr>
+  <tr><td>WM</td><td><a href="https://github.com/swaywm/sway/wiki">Sway</a></td><td>i3 keys and config on Wayland; stable, few surprises</td></tr>
+  <tr><td>Bar</td><td><a href="https://github.com/Alexays/Waybar/wiki">Waybar</a></td><td>Sway workspaces, battery, network, audio in one bar</td></tr>
+  <tr><td>Launcher</td><td><a href="https://codeberg.org/dnkl/fuzzel">fuzzel</a></td><td>Fast Wayland launcher, already configured</td></tr>
+  <tr><td>Notifications</td><td><a href="https://github.com/emersion/mako">mako</a></td><td>Minimal, no daemon setup</td></tr>
+  <tr><td>Monitors</td><td><a href="https://sr.ht/~emersion/kanshi/">kanshi</a> · <a href="https://github.com/artizirk/wdisplays">wdisplays</a></td><td>Auto layout on HDMI plug; GUI for one-off changes</td></tr>
+  <tr><td>Wallpaper</td><td><a href="https://codeberg.org/LGFae/awww">awww</a> + <code>wall</code></td><td>Animated transitions; <code>wall</code> picks/cycles images from <code>~/Pictures/Wallpapers</code></td></tr>
+  <tr><td>Colors</td><td><a href="https://github.com/InioX/matugen/wiki">matugen</a></td><td>Material You palette from the wallpaper: readable contrast, one calm accent; recolors kitty, sway, waybar, fuzzel, mako, GTK, Neovim, Spotify</td></tr>
+  <tr><td>GTK</td><td><a href="https://github.com/lassekongo83/adw-gtk3">adw-gtk3</a></td><td>Dark theme that takes the generated accent colors</td></tr>
+  <tr><td>Screenshots</td><td><a href="https://github.com/gabm/Satty">grim + slurp + satty</a></td><td>Region capture with annotation, Wayland native</td></tr>
+
+  <tr><td>Terminal</td><td><a href="https://sw.kovidgoyal.net/kitty/">Kitty</a></td><td>Kitty graphics protocol: real image previews in yazi/fzf; remote control off</td></tr>
+  <tr><td>Shell</td><td><a href="https://fishshell.com/docs/current/">Fish</a> + <a href="https://starship.rs/config/">Starship</a></td><td>Existing config and functions kept</td></tr>
+  <tr><td>Fish plugins</td><td><a href="https://github.com/jorgebucaran/fisher">fisher</a></td><td>Plain plugin list (<code>fish_plugins</code>); bass for ROS setup.bash</td></tr>
+  <tr><td>CLI</td><td><a href="https://eza.rocks">eza</a>, <a href="https://github.com/sharkdp/bat">bat</a>, <a href="https://junegunn.github.io/fzf/">fzf</a>, <a href="https://github.com/ajeetdsouza/zoxide">zoxide</a>, <a href="https://github.com/BurntSushi/ripgrep">rg</a>, <a href="https://github.com/sharkdp/fd">fd</a></td><td>Faster, readable defaults for daily commands</td></tr>
+  <tr><td>Files</td><td><a href="https://yazi-rs.github.io/docs/">yazi</a></td><td>TUI file manager with image, PDF and video previews in Kitty</td></tr>
+  <tr><td>Git</td><td><a href="https://github.com/jesseduffield/lazygit">lazygit</a> · <a href="https://cli.github.com/manual/">gh</a></td><td>Git TUI; GitHub auth and SSH key upload</td></tr>
+  <tr><td>Editor</td><td><a href="https://neovim.io/doc/">Neovim</a></td><td>Own lean config: snacks picker, native LSP + Mason, colors follow the wallpaper (<a href="docs/NVIM_GUIDE.md">keys</a>)</td></tr>
+
+  <tr><td>PDF</td><td><a href="https://pwmt.org/projects/zathura/">zathura</a></td><td>Vim keys, light; default for PDF/EPUB</td></tr>
+  <tr><td>Images</td><td><a href="https://sr.ht/~exec64/imv/">imv</a></td><td>Wayland viewer, browses the folder; default for images</td></tr>
+  <tr><td>Video</td><td><a href="https://mpv.io/manual/stable/">mpv</a></td><td>Plays everything, hardware decode on Iris (VA-API); default for video/audio files</td></tr>
+  <tr><td>Music</td><td><a href="https://mpd.readthedocs.io">mpd</a> + <a href="https://github.com/ncmpcpp/ncmpcpp">ncmpcpp</a></td><td>Background daemon, TUI client</td></tr>
+  <tr><td>Defaults</td><td><a href="https://wiki.archlinux.org/title/XDG_MIME_Applications">mimeapps.list</a></td><td>Tracked file routes PDF/images/video to the tools above</td></tr>
+
+  <tr><td>Audio</td><td><a href="https://wiki.archlinux.org/title/PipeWire">PipeWire</a> · <a href="https://github.com/tsowell/wiremix">wiremix</a></td><td>Standard audio server; TUI mixer</td></tr>
+  <tr><td>Headset</td><td><a href="https://github.com/Sapd/HeadsetControl">HeadsetControl</a></td><td>HyperX Cloud III works as USB audio; this adds battery/sidetone where supported</td></tr>
+  <tr><td>Bluetooth</td><td><a href="https://wiki.archlinux.org/title/Bluetooth">BlueZ</a> · <a href="https://github.com/pythops/bluetui">bluetui</a></td><td>Stack + TUI</td></tr>
+  <tr><td>GPU</td><td><a href="https://wiki.archlinux.org/title/Intel_graphics">mesa, vulkan-intel, intel-media-driver</a></td><td>OpenGL/Vulkan and video decode for Iris Plus</td></tr>
+  <tr><td>Power</td><td><a href="https://linrunner.de/tlp/">TLP</a></td><td>Battery life; conservation mode stops charge at ~60%</td></tr>
+  <tr><td>Swap</td><td><a href="https://github.com/systemd/zram-generator">zram</a> + <a href="https://wiki.archlinux.org/title/Btrfs#Swap_file">Btrfs swapfile</a></td><td>Fast compressed swap; disk swap only for hibernate</td></tr>
+
+  <tr><td>Network</td><td><a href="https://wiki.archlinux.org/title/NetworkManager">NetworkManager</a></td><td><code>nmtui</code>, eduroam, VPN plugins</td></tr>
+  <tr><td>VPN</td><td><a href="https://tailscale.com/kb">Tailscale</a></td><td>Mesh access to the remote compute machine, no port forwarding</td></tr>
+  <tr><td>VPN</td><td><a href="https://github.com/adrienverge/openfortivpn">openfortivpn</a></td><td>Fortinet VPN from the terminal</td></tr>
+  <tr><td>Firewall</td><td><a href="https://firewalld.org/documentation/">firewalld</a></td><td>Works with Docker (UFW doesn't); tailnet trusted, Wi-Fi closed</td></tr>
+  <tr><td>Streaming</td><td><a href="https://github.com/moonlight-stream/moonlight-docs/wiki">Moonlight</a></td><td>Low-latency desktop stream from the remote machine over Tailscale</td></tr>
+  <tr><td>Analysis</td><td><a href="https://nmap.org/book/man.html">nmap</a>, <a href="https://www.wireshark.org/docs/man-pages/tshark.html">tshark</a>, <a href="https://www.tcpdump.org/manpages/tcpdump.1.html">tcpdump</a>, <a href="https://github.com/traviscross/mtr">mtr</a>, <a href="https://iperf.fr">iperf3</a>, <a href="https://github.com/raboof/nethogs">nethogs</a></td><td>Scan, capture, route, throughput, per-process usage — all CLI</td></tr>
+
+  <tr><td>Containers</td><td><a href="https://docs.docker.com">Docker</a></td><td>Daily workflow; socket-activated so it costs no RAM until used</td></tr>
+  <tr><td>Dev boxes</td><td><a href="https://distrobox.it">Distrobox</a> + <a href="https://podman.io/docs">Podman</a></td><td>Ubuntu userland for ROS, rootless, shares home and display</td></tr>
+  <tr><td>Robotics</td><td><a href="https://docs.ros.org/en/jazzy/">ROS 2 Jazzy</a> · <a href="https://gazebosim.org/docs/harmonic">Gazebo Harmonic</a></td><td>LTS to 2029; matching Gazebo LTS</td></tr>
+  <tr><td>ROS remote</td><td><a href="https://github.com/ros2/rmw_zenoh">rmw_zenoh</a> / <a href="https://github.com/eclipse-cyclonedds/cyclonedds">CycloneDDS</a></td><td>Tailscale has no multicast: use Zenoh or Cyclone unicast peers</td></tr>
+  <tr><td>Visualization</td><td><a href="https://docs.foxglove.dev">Foxglove</a> + <a href="https://docs.foxglove.dev/docs/connecting-to-data/ros-foxglove-bridge">foxglove_bridge</a></td><td>App on host, bridge in container (<code>ws://localhost:8765</code>)</td></tr>
+  <tr><td>Python</td><td><a href="https://docs.astral.sh/uv/">uv</a></td><td>Python versions + venvs in one fast tool; <code>mkvenv</code> uses it</td></tr>
+  <tr><td>Rust</td><td><a href="https://rust-lang.github.io/rustup/">rustup</a></td><td>Official toolchain manager</td></tr>
+  <tr><td>C/C++</td><td>gcc, clang, gdb, lldb, cmake, ninja, valgrind</td><td>Standard build and debug set</td></tr>
+  <tr><td>Node</td><td><a href="https://github.com/Schniz/fnm">fnm</a></td><td>Per-project Node versions</td></tr>
+
+  <tr><td>Music app</td><td>Spotify + <a href="https://spicetify.app/docs/">Spicetify</a></td><td>Spotify themed with the wallpaper colors; rerun <code>spicetify backup apply</code> after Spotify updates</td></tr>
+  <tr><td>Browser</td><td><a href="https://librewolf.net/docs/">LibreWolf</a></td><td>Firefox with privacy defaults, in the official repos</td></tr>
+  <tr><td>Notes</td><td><a href="https://docs.logseq.com">Logseq</a></td><td>FOSS, local markdown</td></tr>
+  <tr><td>Dotfiles</td><td><a href="https://www.gnu.org/software/stow/manual/">GNU Stow</a></td><td>Plain symlinks, no extra tooling</td></tr>
+</table></div>
+
+<h2>Sway keys</h2>
+<div class="table"><table>
+  <tr><td>Super + Enter</td><td>Kitty</td><td>Super + d — launcher · Super + e — yazi · Super + b — browser</td></tr>
+  <tr><td>Super + h j k l</td><td>focus</td><td>+ Shift moves the window · + Ctrl moves the workspace to another monitor</td></tr>
+  <tr><td>Super + 1…0</td><td>workspace</td><td>+ Shift sends the window</td></tr>
+  <tr><td>Super + f / q / r</td><td>fullscreen</td><td>close · resize mode</td></tr>
+  <tr><td>Print</td><td>screenshot</td><td>region → satty · Shift + Print — full screen</td></tr>
+  <tr><td>Super + Shift + w</td><td>wallpaper picker</td><td>Super + Shift + n — next · Super + Shift + r — random</td></tr>
+  <tr><td>Super + Esc</td><td>lock</td><td>Super + Shift + e — exit</td></tr>
+</table></div>
+
+</main>
+</body>
+</html>

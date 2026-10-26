@@ -1,0 +1,7 @@
+# AUR packages. One per line, '#' starts a comment.
+# Installed by scripts/02-aur.sh — review each PKGBUILD when paru asks.
+
+logseq-desktop-bin
+foxglove-bin
+spotify
+spicetify-cli

@@ -1,0 +1,53 @@
+# matugen — Material You colors from the wallpaper. Run through `wall`, not directly.
+# Docs: https://github.com/InioX/matugen/wiki
+# Outputs are generated files (not in git); templates live next to this file.
+
+[config]
+prefer = "saturation"          # colorful wallpapers: pick the most saturated source color
+fallback_color = "#8caaee"     # used when the wallpaper has no usable color (b/w images)
+
+# Terminal/syntax colors, blended toward the wallpaper accent so they match it.
+[config.custom_colors]
+red = "#e06c75"
+green = "#98c379"
+yellow = "#e5c07b"
+blue = "#61afef"
+magenta = "#c678dd"
+cyan = "#56b6c2"
+orange = "#d19a66"
+
+[templates.kitty]
+input_path = "~/.config/matugen/templates/kitty.conf"
+output_path = "~/.config/kitty/colors.conf"
+
+[templates.sway]
+input_path = "~/.config/matugen/templates/sway"
+output_path = "~/.config/sway/colors"
+
+[templates.waybar]
+input_path = "~/.config/matugen/templates/waybar.css"
+output_path = "~/.config/waybar/colors.css"
+
+[templates.fuzzel]
+input_path = "~/.config/matugen/templates/fuzzel.ini"
+output_path = "~/.config/fuzzel/fuzzel.ini"
+
+[templates.mako]
+input_path = "~/.config/matugen/templates/mako"
+output_path = "~/.config/mako/config"
+
+[templates.nvim]
+input_path = "~/.config/matugen/templates/nvim.lua"
+output_path = "~/.local/state/nvim/matugen.lua"
+
+[templates.gtk3]
+input_path = "~/.config/matugen/templates/gtk.css"
+output_path = "~/.config/gtk-3.0/gtk.css"
+
+[templates.gtk4]
+input_path = "~/.config/matugen/templates/gtk.css"
+output_path = "~/.config/gtk-4.0/gtk.css"
+
+[templates.spicetify]
+input_path = "~/.config/matugen/templates/spicetify.ini"
+output_path = "~/.config/spicetify/Themes/matugen/color.ini"

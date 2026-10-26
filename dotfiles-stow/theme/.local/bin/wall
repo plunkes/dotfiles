@@ -1,0 +1,96 @@
+#!/usr/bin/env bash
+# wall — set the wallpaper and recolor the desktop from it.
+#
+#   wall                pick from $WALL_DIR with image previews (fzf + Kitty)
+#   wall <image>        use this image
+#   wall next | prev    cycle through $WALL_DIR
+#   wall random         random image from $WALL_DIR
+#   wall restore        re-set the last wallpaper (sway startup), no recolor
+#   wall colors         regenerate colors for the current wallpaper only
+#
+# Env: WALL_DIR (default ~/Pictures/Wallpapers), WALL_SCHEME (default scheme-tonal-spot,
+#      e.g. scheme-content, scheme-expressive, scheme-monochrome)
+set -euo pipefail
+
+WALL_DIR="${WALL_DIR:-$HOME/Pictures/Wallpapers}"
+WALL_SCHEME="${WALL_SCHEME:-scheme-tonal-spot}"
+state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/wall"
+current_file="$state_dir/current"
+mkdir -p "$state_dir"
+
+die() { echo "wall: $*" >&2; exit 1; }
+
+list_walls() {
+  find -L "$WALL_DIR" -maxdepth 1 -type f \
+    \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.webp' -o -iname '*.gif' \) | sort
+}
+
+current() { [[ -f "$current_file" ]] && cat "$current_file"; }
+
+# Print the wallpaper $1 steps away from the current one (wraps around).
+step() {
+  local -a walls
+  mapfile -t walls < <(list_walls)
+  [[ ${#walls[@]} -gt 0 ]] || die "no images in $WALL_DIR"
+  local cur i idx=-1
+  cur="$(current || true)"
+  for i in "${!walls[@]}"; do [[ "${walls[$i]}" == "$cur" ]] && idx=$i; done
+  echo "${walls[$(( (idx + $1 + ${#walls[@]}) % ${#walls[@]} ))]}"
+}
+
+pick() {
+  list_walls | fzf --prompt 'wallpaper> ' --with-nth -1 --delimiter / \
+    --preview 'kitten icat --clear --transfer-mode=memory --stdin=no --place=${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES}@0x0 {}' \
+    --preview-window 'right,65%,border-left'
+}
+
+set_image() {
+  [[ -n "${WAYLAND_DISPLAY:-}" ]] || return 0
+  if ! awww query &>/dev/null; then
+    awww-daemon &>/dev/null & disown
+    for _ in {1..50}; do awww query &>/dev/null && break; sleep 0.1; done
+  fi
+  awww img "$1" --transition-type grow --transition-pos 0.5,0.5 --transition-fps 60 --transition-duration 1
+}
+
+gen_colors() {
+  matugen image "$1" -m dark -t "$WALL_SCHEME" -q
+  # Spicetify needs a user.css next to color.ini.
+  touch "${XDG_CONFIG_HOME:-$HOME/.config}/spicetify/Themes/matugen/user.css"
+}
+
+reload_apps() {
+  pkill -USR1 -x kitty || true                          # kitty re-reads its config
+  if [[ -n "${SWAYSOCK:-}" ]]; then swaymsg reload >/dev/null || true; fi
+  pkill -USR2 -x waybar || true                         # waybar reloads its CSS
+  makoctl reload 2>/dev/null || true
+  # Running Neovim instances.
+  local sock
+  for sock in "${XDG_RUNTIME_DIR:-/run/user/$UID}"/nvim.*.0; do
+    [[ -S "$sock" ]] && nvim --server "$sock" --remote-expr 'luaeval("require(\"config.theme\").reload()")' >/dev/null 2>&1 || true
+  done
+  # Spotify picks the colors up on its next start.
+  if command -v spicetify &>/dev/null; then spicetify -q refresh &>/dev/null || true; fi
+}
+
+apply() {
+  local img
+  img="$(realpath "$1")"
+  [[ -f "$img" ]] || die "not a file: $1"
+  set_image "$img"
+  gen_colors "$img"
+  echo "$img" > "$current_file"
+  reload_apps
+  command -v notify-send &>/dev/null && notify-send -i "$img" "Wallpaper" "$(basename "$img")" 2>/dev/null || true
+}
+
+case "${1:-}" in
+  "")       img="$(pick)" && [[ -n "$img" ]] && apply "$img" ;;
+  next)     apply "$(step 1)" ;;
+  prev)     apply "$(step -1)" ;;
+  random)   apply "$(list_walls | shuf -n1)" ;;
+  restore)  img="$(current || true)"; [[ -n "$img" && -f "$img" ]] || img="$(step 1)"; set_image "$img" ;;
+  colors)   img="$(current)" || die "no wallpaper set yet"; gen_colors "$img"; reload_apps ;;
+  -h|--help) sed -n '2,13p' "$0" | sed 's/^# \{0,1\}//' ;;
+  *)        apply "$1" ;;
+esac
