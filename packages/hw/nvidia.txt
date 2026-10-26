@@ -1,0 +1,3 @@
+# Turing (GTX 16xx / RTX 20xx) or newer. Older cards need an AUR legacy driver.
+nvidia-open
+nvidia-utils

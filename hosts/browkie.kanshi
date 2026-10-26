@@ -1,4 +1,4 @@
-# kanshi — auto-switch monitor layouts on HDMI plug. Docs: man 5 kanshi
+# kanshi for host browkie — copied to ~/.config/kanshi/config by scripts/05-dotfiles.sh. Docs: man 5 kanshi
 # Find names with: swaymsg -t get_outputs
 profile laptop {
     output eDP-1 enable mode 1920x1080 position 0,0

@@ -1,4 +1,5 @@
-# Official repo packages. One per line, '#' starts a comment.
+# Official repo packages for every machine. One per line, '#' starts a comment.
+# Hardware-specific lists are in hw/ and picked by scripts/detect.sh.
 # Installed by scripts/01-packages.sh
 
 # --- base ---
@@ -14,15 +15,12 @@ man-pages
 pacman-contrib
 fwupd
 
-# --- boot / cpu / gpu / firmware ---
+# --- boot / firmware / graphics (vendor drivers: hw/) ---
 grub
 efibootmgr
-intel-ucode
 linux-firmware
 sof-firmware
 mesa
-vulkan-intel
-intel-media-driver
 libva-utils
 
 # --- desktop: sway ---
@@ -42,7 +40,6 @@ mako
 kanshi
 wdisplays
 wl-clipboard
-brightnessctl
 playerctl
 grim
 slurp
@@ -95,7 +92,7 @@ mpd
 mpc
 ncmpcpp
 
-# --- audio / bluetooth / headset ---
+# --- audio / headset ---
 pipewire
 pipewire-pulse
 pipewire-alsa
@@ -103,9 +100,6 @@ pipewire-jack
 wireplumber
 wiremix
 alsa-utils
-bluez
-bluez-utils
-bluetui
 headsetcontrol
 
 # --- dev ---
@@ -144,8 +138,7 @@ iw
 ethtool
 nethogs
 
-# --- power / memory ---
-tlp
+# --- memory ---
 zram-generator
 
 # --- apps ---

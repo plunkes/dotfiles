@@ -1,19 +1,20 @@
 # dotfiles
 
-Arch Linux setup for a laptop.
+Arch Linux setup for any laptop or desktop: hardware is detected, per-machine tweaks live in `hosts/`.
 Sway · Kitty · Fish · Neovim · ROS 2 Jazzy in Distrobox · Tailscale.
 
 Full guide with the reason for each tool: [INSTALLATION.html](INSTALLATION.html).
 
 ## Install
 
-1. Install Arch ([guide](https://wiki.archlinux.org/title/Installation_guide)): UEFI, GRUB, Btrfs with `@` and `@home` subvolumes.
+1. Install Arch ([guide](https://wiki.archlinux.org/title/Installation_guide)): UEFI, GRUB, Btrfs (`@`, `@home`) or ext4. Pick a hostname.
 2. Clone and run as your user (scripts call `sudo` themselves):
 
 ```bash
 git clone git@github.com:plunkes/dotfiles.git ~/dotfiles
 cd ~/dotfiles
-./install.sh          # all steps; ./install.sh 05 resumes from step 05
+bash scripts/detect.sh   # check what was detected
+./install.sh             # all steps; ./install.sh 05 resumes from step 05
 ```
 
 | Step | Does |
@@ -37,10 +38,28 @@ gh auth login && gh ssh-key add ~/.ssh/id_ed25519.pub
 echo 'set -gx VPN_USER <id>' > ~/.config/fish/conf.d/local.fish
 ```
 
+## Hardware
+
+`scripts/detect.sh` reads `/proc` and `/sys` and picks:
+
+| Detected | Installs / does |
+|---|---|
+| Intel / AMD CPU | `packages/hw/intel-cpu.txt` / `amd-cpu.txt` (microcode) |
+| Intel / AMD / NVIDIA GPU | `hw/intel-gpu.txt` / `amd-gpu.txt` / `nvidia.txt` |
+| Laptop (battery) | `hw/laptop.txt`: TLP, brightness; hibernation swapfile = RAM |
+| Desktop | `hw/desktop.txt`: power-profiles-daemon; zram only |
+| Bluetooth | `hw/bluetooth.txt` + service |
+| Btrfs / ext4 root | matching swapfile method |
+
+What can't be detected goes in `hosts/<hostname>.conf` (keyboard, charge limit, swap, extra packages; see `hosts/default.conf`) and optionally `hosts/<hostname>.kanshi` (monitor layout). No file = defaults. Force a profile with `HOST=name ./install.sh`.
+
+**NVIDIA:** installs `nvidia-open` (GTX 16xx / RTX 20xx or newer) and starts Sway with `--unsupported-gpu`. Sway doesn't officially support the proprietary driver; expect occasional glitches.
+
 ## Layout
 
 ```
-packages/       package lists
+packages/       package lists (base + hw/)
+hosts/          per-machine profiles
 scripts/        install steps (lib.sh = shared helpers)
 dotfiles-stow/  one stow package per app -> ~
 system/         files copied to /etc

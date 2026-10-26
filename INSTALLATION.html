@@ -41,15 +41,17 @@
 <main>
 
 <h1>dotfiles</h1>
-<p class="sub">Arch Linux</p>
+<p class="sub">Arch Linux · any laptop or desktop · hardware auto-detected, per-machine tweaks in <code>hosts/</code></p>
 
 <h2>Install</h2>
 <ol>
-  <li>Install Arch with the <a href="https://wiki.archlinux.org/title/Installation_guide">official guide</a>: UEFI, GRUB, Btrfs subvolumes <code>@</code> and <code>@home</code>.</li>
+  <li>Install Arch with the <a href="https://wiki.archlinux.org/title/Installation_guide">official guide</a>: UEFI, GRUB, Btrfs (<code>@</code>, <code>@home</code>) or ext4. Optional: add <code>hosts/&lt;hostname&gt;.conf</code> (keyboard, charge limit, extras).</li>
   <li>GRUB background lives in <code>grub/lunkes/background.png</code> (<a href="grub/README.md">change it</a>). Desktop wallpapers go in <code>wallpapers/</code>.</li>
   <li>Run as your user:
 <pre><code>git clone git@github.com:plunkes/dotfiles.git ~/dotfiles
-cd ~/dotfiles && ./install.sh</code></pre></li>
+cd ~/dotfiles
+bash scripts/detect.sh   # check detected hardware
+./install.sh</code></pre></li>
   <li>Reboot, then:
 <pre><code>sudo tailscale up
 gh auth login && gh ssh-key add ~/.ssh/id_ed25519.pub
@@ -59,14 +61,14 @@ echo 'set -gx VPN_USER &lt;id&gt;' &gt; ~/.config/fish/conf.d/local.fish</code><
 <div class="table"><table>
   <tr><th>Step</th><th>Script</th><th>Does</th></tr>
   <tr><td>00</td><td>bootstrap</td><td>system update, paru</td></tr>
-  <tr><td>01</td><td>packages</td><td><code>packages/pacman.txt</code></td></tr>
+  <tr><td>01</td><td>packages</td><td><code>packages/base.txt</code> + matching <code>packages/hw/*</code></td></tr>
   <tr><td>02</td><td>aur</td><td><code>packages/aur.txt</code> (review PKGBUILDs)</td></tr>
   <tr><td>03</td><td>grub</td><td>theme, fonts, <code>grub-mkconfig</code></td></tr>
-  <tr><td>04</td><td>swap</td><td>zram + Btrfs swapfile, hibernation resume</td></tr>
-  <tr><td>05</td><td>dotfiles</td><td><code>stow</code> configs into <code>~</code></td></tr>
+  <tr><td>04</td><td>swap</td><td>zram; laptops: swapfile (Btrfs or ext4) + hibernation</td></tr>
+  <tr><td>05</td><td>dotfiles</td><td><code>stow</code> configs into <code>~</code>, keyboard/monitors from the host profile</td></tr>
   <tr><td>06</td><td>dev</td><td>Rust, Python, Node, groups, fish plugins</td></tr>
   <tr><td>07</td><td>distrobox-ros2</td><td><code>ros-jazzy</code> container</td></tr>
-  <tr><td>08</td><td>system</td><td>greetd, TLP, services, firewall, SSH key</td></tr>
+  <tr><td>08</td><td>system</td><td>greetd, power (TLP or power-profiles-daemon), services, firewall, SSH key</td></tr>
   <tr><td>09</td><td>theme</td><td>wallpaper folder, first colors, GTK dark, Spicetify (open Spotify once first)</td></tr>
 </table></div>
 <p class="sub">Resume from a step: <code>./install.sh 05</code>. Each script also runs alone.</p>
@@ -104,9 +106,9 @@ echo 'set -gx VPN_USER &lt;id&gt;' &gt; ~/.config/fish/conf.d/local.fish</code><
   <tr><td>Audio</td><td><a href="https://wiki.archlinux.org/title/PipeWire">PipeWire</a> · <a href="https://github.com/tsowell/wiremix">wiremix</a></td><td>Standard audio server; TUI mixer</td></tr>
   <tr><td>Headset</td><td><a href="https://github.com/Sapd/HeadsetControl">HeadsetControl</a></td><td>HyperX Cloud III works as USB audio; this adds battery/sidetone where supported</td></tr>
   <tr><td>Bluetooth</td><td><a href="https://wiki.archlinux.org/title/Bluetooth">BlueZ</a> · <a href="https://github.com/pythops/bluetui">bluetui</a></td><td>Stack + TUI</td></tr>
-  <tr><td>GPU</td><td><a href="https://wiki.archlinux.org/title/Intel_graphics">mesa, vulkan-intel, intel-media-driver</a></td><td>OpenGL/Vulkan and video decode for Iris Plus</td></tr>
-  <tr><td>Power</td><td><a href="https://linrunner.de/tlp/">TLP</a></td><td>Battery life; conservation mode stops charge at ~60%</td></tr>
-  <tr><td>Swap</td><td><a href="https://github.com/systemd/zram-generator">zram</a> + <a href="https://wiki.archlinux.org/title/Btrfs#Swap_file">Btrfs swapfile</a></td><td>Fast compressed swap; disk swap only for hibernate</td></tr>
+  <tr><td>GPU</td><td><a href="https://wiki.archlinux.org/title/Intel_graphics">Intel</a> · <a href="https://wiki.archlinux.org/title/AMDGPU">AMD</a> · <a href="https://wiki.archlinux.org/title/NVIDIA">NVIDIA</a></td><td>Driver picked from the detected GPU; NVIDIA runs Sway with <code>--unsupported-gpu</code> (not officially supported)</td></tr>
+  <tr><td>Power</td><td><a href="https://linrunner.de/tlp/">TLP</a></td><td>Laptops: battery life, optional charge limit per host; desktops use power-profiles-daemon</td></tr>
+  <tr><td>Swap</td><td><a href="https://github.com/systemd/zram-generator">zram</a> + <a href="https://wiki.archlinux.org/title/Btrfs#Swap_file">Btrfs swapfile</a></td><td>Fast compressed swap; disk swapfile only for hibernation on laptops</td></tr>
 
   <tr><td>Network</td><td><a href="https://wiki.archlinux.org/title/NetworkManager">NetworkManager</a></td><td><code>nmtui</code>, eduroam, VPN plugins</td></tr>
   <tr><td>VPN</td><td><a href="https://tailscale.com/kb">Tailscale</a></td><td>Mesh access to the remote compute machine, no port forwarding</td></tr>

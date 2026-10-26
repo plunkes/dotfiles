@@ -1,48 +1,68 @@
 #!/usr/bin/env bash
-# zram for daily swap + a Btrfs swapfile used only for hibernation.
-# Usage: scripts/04-swap.sh [size]   (default 12g = RAM size)
+# zram for daily swap. If HIBERNATE=1 (default on laptops), also a swapfile the
+# size of RAM for hibernation, on Btrfs (@swap subvolume) or ext4 (/swapfile).
+# Override in hosts/<hostname>.conf: HIBERNATE=0|1, SWAP_SIZE=16g
 set -euo pipefail
 source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 require_user
-
-size="${1:-12g}"
-swapfile="/swap/swapfile"
 
 log "Configuring zram"
 sudo install -m 644 "$REPO_DIR/system/zram-generator.conf" /etc/systemd/zram-generator.conf
 sudo systemctl daemon-reload
 sudo systemctl start systemd-zram-setup@zram0.service
 
-[[ "$(findmnt -no FSTYPE /)" == btrfs ]] || die "Root is not Btrfs; this script expects Btrfs."
+if [[ $HIBERNATE != 1 ]]; then
+  log "HIBERNATE=0: zram only. Done. Next: scripts/05-dotfiles.sh"
+  exit 0
+fi
 
-root_src="$(findmnt -no SOURCE /)"
-root_dev="${root_src%%[*}"
 fs_uuid="$(findmnt -no UUID /)"
 
-# Dedicated @swap subvolume so root snapshots don't include the swapfile.
-if ! findmnt /swap &>/dev/null; then
-  log "Creating @swap subvolume"
-  top="$(mktemp -d)"
-  sudo mount -o subvolid=5 "$root_dev" "$top"
-  [[ -d "$top/@swap" ]] || sudo btrfs subvolume create "$top/@swap"
-  sudo umount "$top" && rmdir "$top"
+case "$ROOT_FS" in
+  btrfs)
+    swapfile="/swap/swapfile"
+    root_src="$(findmnt -no SOURCE /)"
+    root_dev="${root_src%%[*}"
+    # Dedicated @swap subvolume so root snapshots don't include the swapfile.
+    if ! findmnt /swap &>/dev/null; then
+      log "Creating @swap subvolume"
+      top="$(mktemp -d)"
+      sudo mount -o subvolid=5 "$root_dev" "$top"
+      [[ -d "$top/@swap" ]] || sudo btrfs subvolume create "$top/@swap"
+      sudo umount "$top" && rmdir "$top"
+      sudo install -d /swap
+      grep -q '[[:space:]]/swap[[:space:]]' /etc/fstab ||
+        echo "UUID=$fs_uuid /swap btrfs subvol=/@swap,noatime 0 0" | sudo tee -a /etc/fstab >/dev/null
+      sudo mount /swap
+    fi
+    if [[ ! -f "$swapfile" ]]; then
+      log "Creating $SWAP_SIZE swapfile"
+      sudo btrfs filesystem mkswapfile --size "$SWAP_SIZE" --uuid clear "$swapfile"
+    fi
+    ;;
+  ext4)
+    swapfile="/swapfile"
+    if [[ ! -f "$swapfile" ]]; then
+      log "Creating $SWAP_SIZE swapfile"
+      sudo mkswap --file --size "${SWAP_SIZE^^}" -U clear "$swapfile"
+    fi
+    ;;
+  *)
+    warn "Hibernation swapfile not supported on '$ROOT_FS' by this script; zram only."
+    exit 0
+    ;;
+esac
 
-  sudo install -d /swap
-  grep -q '[[:space:]]/swap[[:space:]]' /etc/fstab ||
-    echo "UUID=$fs_uuid /swap btrfs subvol=/@swap,noatime 0 0" | sudo tee -a /etc/fstab >/dev/null
-  sudo mount /swap
-fi
-
-if [[ ! -f "$swapfile" ]]; then
-  log "Creating $size swapfile"
-  sudo btrfs filesystem mkswapfile --size "$size" --uuid clear "$swapfile"
-fi
 grep -q "^$swapfile " /etc/fstab ||
   echo "$swapfile none swap defaults,pri=10 0 0" | sudo tee -a /etc/fstab >/dev/null
 swapon --show=NAME --noheadings | grep -qx "$swapfile" || sudo swapon "$swapfile"
 
 log "Configuring hibernation resume"
-offset="$(sudo btrfs inspect-internal map-swapfile -r "$swapfile")"
+if [[ $ROOT_FS == btrfs ]]; then
+  offset="$(sudo btrfs inspect-internal map-swapfile -r "$swapfile")"
+else
+  offset="$(sudo filefrag -v "$swapfile" | awk '$1 == "0:" { sub(/\.\.$/, "", $4); print $4 }')"
+fi
 resume="resume=UUID=$fs_uuid resume_offset=$offset"
 if ! grep -q "resume_offset=" /etc/default/grub; then
   sudo sed -i -E "s|^(GRUB_CMDLINE_LINUX_DEFAULT=\"[^\"]*)\"|\1 $resume\"|" /etc/default/grub

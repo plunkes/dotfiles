@@ -1,11 +1,12 @@
 # /etc/greetd/config.toml — tuigreet login on tty1, launches Sway.
+# @SWAY_CMD@ is filled in by scripts/08-system.sh (adds --unsupported-gpu on NVIDIA).
 [terminal]
 vt = 1
 
 [default_session]
 user = "greeter"
 command = """tuigreet \
-  --cmd sway \
+  --cmd '@SWAY_CMD@' \
   --time --time-format '%a %d %b  %H:%M' \
   --remember --remember-user-session \
   --asterisks --asterisks-char '•' \

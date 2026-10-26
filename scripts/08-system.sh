@@ -6,25 +6,37 @@ require_user
 
 sys="$REPO_DIR/system"
 
-log "Installing system config files"
-sudo install -Dm 644 "$sys/greetd/config.toml" /etc/greetd/config.toml
-sudo install -Dm 644 "$sys/tlp.d/10-lunkes.conf" /etc/tlp.d/10-lunkes.conf
+log "greetd: login launches '$SWAY_CMD'"
+sed "s|@SWAY_CMD@|$SWAY_CMD|" "$sys/greetd/config.toml" | sudo install -Dm 644 /dev/stdin /etc/greetd/config.toml
 
-log "Enabling services"
-# TLP owns radio/power state; these conflict with it.
-sudo systemctl mask systemd-rfkill.service systemd-rfkill.socket
-sudo systemctl disable --now power-profiles-daemon.service 2>/dev/null || true
-sudo systemctl enable \
-  NetworkManager.service \
-  bluetooth.service \
-  tailscaled.service \
-  firewalld.service \
-  docker.socket \
-  tlp.service \
-  greetd.service \
-  systemd-timesyncd.service \
-  fstrim.timer \
+services=(
+  NetworkManager.service
+  tailscaled.service
+  firewalld.service
+  docker.socket
+  greetd.service
+  systemd-timesyncd.service
+  fstrim.timer
   paccache.timer
+)
+[[ $HAS_BLUETOOTH == 1 ]] && services+=(bluetooth.service)
+
+if [[ $IS_LAPTOP == 1 ]]; then
+  log "Laptop: TLP${CHARGE_STOP_THRESHOLD:+ (charge limit $CHARGE_STOP_THRESHOLD)}"
+  {
+    cat "$sys/tlp.d/10-dotfiles.conf"
+    [[ -n $CHARGE_STOP_THRESHOLD ]] && echo "STOP_CHARGE_THRESH_BAT0=$CHARGE_STOP_THRESHOLD"
+  } | sudo install -Dm 644 /dev/stdin /etc/tlp.d/10-dotfiles.conf
+  # TLP owns radio/power state; these conflict with it.
+  sudo systemctl mask systemd-rfkill.service systemd-rfkill.socket
+  sudo systemctl disable --now power-profiles-daemon.service 2>/dev/null || true
+  services+=(tlp.service)
+else
+  services+=(power-profiles-daemon.service)
+fi
+
+log "Enabling services: ${services[*]}"
+sudo systemctl enable "${services[@]}"
 systemctl --user enable mpd.service
 
 log "Firewall: trust the tailnet, close everything else inbound"

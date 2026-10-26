@@ -37,7 +37,7 @@ set_grub() {
 
 [[ -f "$grub_cfg.orig" ]] || sudo cp "$grub_cfg" "$grub_cfg.orig"
 set_grub GRUB_THEME "\"$dst/theme.txt\""
-set_grub GRUB_GFXMODE "1920x1080,auto"
+set_grub GRUB_GFXMODE "auto"   # native resolution of the screen
 set_grub GRUB_GFXPAYLOAD_LINUX "keep"
 set_grub GRUB_TIMEOUT_STYLE "menu"
 # A console-only terminal hides the theme.

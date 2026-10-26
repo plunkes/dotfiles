@@ -5,7 +5,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 require_user
 command -v paru &>/dev/null || die "paru not found. Run scripts/00-bootstrap.sh first."
 
-mapfile -t pkgs < <(read_list "$REPO_DIR/packages/aur.txt")
+mapfile -t pkgs < <(read_list "$REPO_DIR/packages/aur.txt"; printf '%s\n' "${EXTRA_AUR[@]}" | sed '/^$/d')
 log "Installing AUR packages: ${pkgs[*]}"
 paru -S --needed "${pkgs[@]}"
 
