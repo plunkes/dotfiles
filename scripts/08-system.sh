@@ -25,7 +25,8 @@ if [[ $IS_LAPTOP == 1 ]]; then
   log "Laptop: TLP${CHARGE_STOP_THRESHOLD:+ (charge limit $CHARGE_STOP_THRESHOLD)}"
   {
     cat "$sys/tlp.d/10-dotfiles.conf"
-    [[ -n $CHARGE_STOP_THRESHOLD ]] && echo "STOP_CHARGE_THRESH_BAT0=$CHARGE_STOP_THRESHOLD"
+    # if, not &&: a false test as the group's last command fails the pipe under set -e.
+    if [[ -n $CHARGE_STOP_THRESHOLD ]]; then echo "STOP_CHARGE_THRESH_BAT0=$CHARGE_STOP_THRESHOLD"; fi
   } | sudo install -Dm 644 /dev/stdin /etc/tlp.d/10-dotfiles.conf
   # TLP owns radio/power state; these conflict with it.
   sudo systemctl mask systemd-rfkill.service systemd-rfkill.socket
