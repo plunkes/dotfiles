@@ -27,5 +27,6 @@ package_lists() {
   done
   if [[ $IS_LAPTOP == 1 ]]; then lists+=("$REPO_DIR/packages/hw/laptop.txt"); else lists+=("$REPO_DIR/packages/hw/desktop.txt"); fi
   [[ $HAS_BLUETOOTH == 1 ]] && lists+=("$REPO_DIR/packages/hw/bluetooth.txt")
+  [[ $ROOT_FS == btrfs ]] && lists+=("$REPO_DIR/packages/hw/btrfs.txt")
   printf '%s\n' "${lists[@]}"
 }

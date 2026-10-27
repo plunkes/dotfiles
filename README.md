@@ -60,7 +60,7 @@ echo 'set -gx VPN_USER <id>' > ~/.config/fish/conf.d/local.fish
 | Laptop (battery) | `hw/laptop.txt`: TLP, brightness; hibernation swapfile = RAM |
 | Desktop | `hw/desktop.txt`: power-profiles-daemon; zram only |
 | Bluetooth | `hw/bluetooth.txt` + service |
-| Btrfs / ext4 root | matching swapfile method |
+| Btrfs / ext4 root | matching swapfile method; `hw/btrfs.txt` (btrfs-progs) on Btrfs |
 
 What can't be detected goes in `hosts/<hostname>.conf` (keyboard, charge limit, swap, extra packages; see `hosts/default.conf`) and optionally `hosts/<hostname>.kanshi` (monitor layout). No file = defaults. Force a profile with `HOST=name ./install.sh`.
 
