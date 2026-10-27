@@ -9,9 +9,14 @@ sudo pacman -Syu --needed --noconfirm base-devel git stow
 
 # Build from source: paru-bin lags behind pacman and breaks on libalpm bumps.
 if ! paru --version &>/dev/null; then
-  if pacman -Q paru-bin &>/dev/null; then
-    log "Removing broken paru-bin"
-    sudo pacman -Rns --noconfirm paru-bin
+  mapfile -t old < <(pacman -Qq paru-bin paru-bin-debug 2>/dev/null)
+  if ((${#old[@]})); then
+    log "Removing broken ${old[*]}"
+    sudo pacman -Rns --noconfirm "${old[@]}"
+  fi
+  # rustup (from 01) provides cargo but has no toolchain until 06; set one now.
+  if command -v rustup &>/dev/null && ! rustup default &>/dev/null; then
+    rustup default stable
   fi
   log "Building paru (AUR helper, takes a few minutes)"
   build_dir="$(mktemp -d)"
