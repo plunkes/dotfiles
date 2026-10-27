@@ -114,6 +114,7 @@ valgrind
 rustup
 uv
 python
+fnm
 npm
 docker
 docker-compose
