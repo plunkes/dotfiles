@@ -124,6 +124,7 @@ distrobox
 
 # --- network / vpn / firewall ---
 networkmanager
+openssh
 tailscale
 firewalld
 openfortivpn
