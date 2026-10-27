@@ -66,4 +66,5 @@ EOF
   return 0
 }
 
-[[ "${BASH_SOURCE[0]}" == "$0" ]] && print_detected
+# if, not &&: a false test as the last line would make `source` fail under set -e.
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then print_detected; fi
