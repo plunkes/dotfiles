@@ -7,11 +7,22 @@ Full guide with the reason for each tool: [INSTALLATION.html](INSTALLATION.html)
 
 ## Install
 
-1. Install Arch ([guide](https://wiki.archlinux.org/title/Installation_guide)): UEFI, GRUB, Btrfs (`@`, `@home`) or ext4. Pick a hostname.
-2. Clone and run as your user (scripts call `sudo` themselves):
+1. Install Arch ([wiki](https://wiki.archlinux.org/title/Installation_guide), [mjkstra's guide](https://gist.github.com/mjkstra/96ce7a5689d753e7a6bdd92cdc169bae)): UEFI, Btrfs (`@`, `@home`) or ext4. Pick a hostname. Partitions: 1 GiB FAT32 ESP on `/boot` + root. No swap partition (`04-swap` handles it). Then:
 
 ```bash
-git clone git@github.com:plunkes/dotfiles.git ~/dotfiles
+# Before arch-chroot; mount the ESP first. Add btrfs-progs on Btrfs, amd-ucode on AMD.
+pacstrap -K /mnt base linux linux-firmware base-devel git sudo networkmanager grub efibootmgr neovim intel-ucode
+# In arch-chroot (useradd also needs %wheel enabled via visudo)
+systemctl enable NetworkManager
+useradd -m -G wheel <user> && passwd <user>
+grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
+grub-mkconfig -o /boot/grub/grub.cfg
+```
+
+1. Reboot, connect with `nmtui`, clone over HTTPS (SSH key comes in `08`) and run as your user (scripts call `sudo` themselves):
+
+```bash
+git clone https://github.com/plunkes/dotfiles.git ~/dotfiles
 cd ~/dotfiles
 bash scripts/detect.sh   # check what was detected
 ./install.sh             # all steps; ./install.sh 05 resumes from step 05
@@ -30,7 +41,7 @@ bash scripts/detect.sh   # check what was detected
 | `08-system` | greetd, TLP, services, firewalld, SSH key |
 | `09-theme` | wallpaper folder, colors from wallpaper, GTK dark, Spicetify |
 
-3. Reboot, then:
+1. Reboot, then:
 
 ```bash
 sudo tailscale up
