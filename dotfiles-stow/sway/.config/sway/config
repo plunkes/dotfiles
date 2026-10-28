@@ -62,7 +62,9 @@ exec /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
 bindsym $mod+Return exec $term
 bindsym $mod+d exec $menu
 bindsym $mod+e exec $term -e yazi
-bindsym $mod+b exec librewolf
+bindsym $mod+w exec librewolf
+bindsym $mod+o exec logseq
+bindsym $mod+m exec spotify
 bindsym $mod+Escape exec $lock
 # Wallpaper: picker / next / random (recolors everything)
 bindsym $mod+Shift+w exec kitty --class wall-picker -e ~/.local/bin/wall
@@ -140,7 +142,7 @@ bindsym $mod+Ctrl+$right move workspace to output right
 bindsym $mod+v splitv
 bindsym $mod+c splith
 bindsym $mod+s layout stacking
-bindsym $mod+w layout tabbed
+bindsym $mod+Shift+t layout tabbed
 bindsym $mod+t layout toggle split
 bindsym $mod+f fullscreen
 bindsym $mod+Shift+space floating toggle
