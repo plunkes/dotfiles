@@ -6,4 +6,6 @@ vt = 1
 [default_session]
 user = "greeter"
 # One line: greetd's config parser has no multi-line strings.
-command = "tuigreet --cmd '@SWAY_CMD@' --time --time-format '%a %d %b  %H:%M' --remember --remember-user-session --asterisks --asterisks-char '•' --greeting 'welcome back' --width 50 --window-padding 2 --container-padding 2 --theme 'border=magenta;title=magenta;greet=cyan;text=white;prompt=green;input=yellow;time=cyan;action=blue;button=magenta'"
+# Grayscale theme matching the GRUB theme (grub/lunkes/theme.txt). Named colors only:
+# the tty has 16 colors, no hex.
+command = "tuigreet --cmd '@SWAY_CMD@' --time --time-format '%a %d %b  %H:%M' --remember --remember-user-session --asterisks --greeting 'welcome back' --width 50 --window-padding 2 --container-padding 2 --theme 'container=black;border=darkgray;title=white;greet=gray;text=gray;prompt=white;input=white;time=darkgray;action=darkgray;button=white'"
