@@ -46,7 +46,7 @@ bash scripts/detect.sh   # check what was detected
 ```bash
 sudo tailscale up
 gh auth login && gh ssh-key add ~/.ssh/id_ed25519.pub
-echo 'set -gx VPN_USER <id>' > ~/.config/fish/conf.d/local.fish
+$EDITOR ~/.config/fish/conf.d/local.fish   # machine-only vars, not tracked
 ```
 
 ## Hardware
