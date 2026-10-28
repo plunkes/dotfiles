@@ -1,5 +1,7 @@
 # dotfiles
 
+[![CI](https://github.com/plunkes/dotfiles/actions/workflows/ci.yml/badge.svg)](https://github.com/plunkes/dotfiles/actions/workflows/ci.yml)
+
 Arch Linux setup for any laptop or desktop: hardware is detected, per-machine tweaks live in `hosts/`.
 Sway · Kitty · Fish · Neovim · ROS 2 Jazzy in Distrobox · Tailscale.
 
