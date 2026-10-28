@@ -15,9 +15,9 @@ set $bg_alt    #1e1f25
 set $fg        #e3e1e9
 set $muted     #45464f
 set $urgent    #ffb4ab
-set $lock_bg   121318
 include ~/.config/sway/colors
-set $lock swaylock -f -c $lock_bg
+# hyprlock blocks until unlock, so swayidle runs it in the background (&).
+set $lock pidof hyprlock || hyprlock -c ~/.config/sway/hyprlock.conf
 
 # --- output / input ---
 # Wallpaper is drawn by awww (no swaybg); change it with `wall` (Super+Shift+w).
@@ -48,9 +48,9 @@ client.urgent           $urgent  $urgent    $bg        $urgent   $urgent
 
 # --- autostart ---
 exec swayidle -w \
-    timeout 300 '$lock' \
+    timeout 300 '$lock &' \
     timeout 600 'swaymsg "output * power off"' resume 'swaymsg "output * power on"' \
-    before-sleep '$lock'
+    before-sleep '$lock & sleep 1'
 exec mkdir -p ~/Pictures/Screenshots
 exec awww-daemon
 exec ~/.local/bin/wall restore
