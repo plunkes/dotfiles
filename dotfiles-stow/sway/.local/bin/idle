@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+# idle — lock / screen-off timers (swayidle) and a keep-awake mode.
+#
+#   idle          start swayidle (sway autostart)
+#   idle toggle   keep-awake on/off (Super+a, or click the waybar icon)
+#   idle lock     lock now (Super+Escape)
+#   idle status   waybar module: an icon while keep-awake is on
+#
+# Keep-awake drops the 5/10 min timers but still locks before suspend (lid close).
+set -euo pipefail
+
+flag="${XDG_RUNTIME_DIR:-/run/user/$UID}/idle-awake"   # gone after reboot
+self="$(realpath "$0")"
+
+lock() { pidof hyprlock >/dev/null || hyprlock -c ~/.config/sway/hyprlock.conf; }
+
+run_swayidle() {
+  # hyprlock blocks until unlock, so it runs in the background (&).
+  local args=(-w before-sleep "$self lock & sleep 1")
+  if [[ ! -f $flag ]]; then
+    args+=(timeout 300 "$self lock &"
+           timeout 600 'swaymsg "output * power off"' resume 'swaymsg "output * power on"')
+  fi
+  pkill -x swayidle || true
+  swayidle "${args[@]}" &>/dev/null & disown
+}
+
+case "${1:-start}" in
+  start) run_swayidle ;;
+  lock) lock ;;
+  toggle)
+    if [[ -f $flag ]]; then
+      rm "$flag"
+      notify-send -t 2000 "Tela normal" "Bloqueia em 5 min, desliga em 10"
+    else
+      touch "$flag"
+      notify-send -t 2000 "Tela sempre ligada" "Sem bloqueio automático até desativar"
+    fi
+    run_swayidle
+    pkill -RTMIN+9 waybar || true
+    ;;
+  status) if [[ -f $flag ]]; then echo "󰅶"; fi ;;
+  *) echo "usage: idle [start|toggle|lock|status]" >&2; exit 1 ;;
+esac

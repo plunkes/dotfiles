@@ -16,8 +16,8 @@ set $fg        #e3e1e9
 set $muted     #45464f
 set $urgent    #ffb4ab
 include ~/.config/sway/colors
-# hyprlock blocks until unlock, so swayidle runs it in the background (&).
-set $lock pidof hyprlock || hyprlock -c ~/.config/sway/hyprlock.conf
+# Lock + idle timers live in ~/.local/bin/idle (also the keep-awake toggle).
+set $lock ~/.local/bin/idle lock
 
 # --- output / input ---
 # Wallpaper is drawn by awww (no swaybg); change it with `wall` (Super+Shift+w).
@@ -47,10 +47,7 @@ client.unfocused        $bg      $bg        $fg        $muted    $muted
 client.urgent           $urgent  $urgent    $bg        $urgent   $urgent
 
 # --- autostart ---
-exec swayidle -w \
-    timeout 300 '$lock &' \
-    timeout 600 'swaymsg "output * power off"' resume 'swaymsg "output * power on"' \
-    before-sleep '$lock & sleep 1'
+exec ~/.local/bin/idle
 exec mkdir -p ~/Pictures/Screenshots
 exec awww-daemon
 exec ~/.local/bin/wall restore
@@ -68,6 +65,8 @@ bindsym $mod+m exec spotify
 bindsym $mod+Escape exec $lock
 # Notifications on/off (do-not-disturb)
 bindsym $mod+n exec ~/.local/bin/dnd
+# Keep-awake: no auto lock / screen off (still locks on suspend)
+bindsym $mod+a exec ~/.local/bin/idle toggle
 # Wallpaper: picker / next / random (recolors everything)
 bindsym $mod+Shift+w exec kitty --class wall-picker -e ~/.local/bin/wall
 bindsym $mod+Shift+n exec ~/.local/bin/wall next

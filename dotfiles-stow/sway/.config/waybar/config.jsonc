@@ -4,10 +4,11 @@
   "height": 26,
   "modules-left": ["sway/workspaces", "sway/mode"],
   "modules-center": ["clock"],
-  "modules-right": ["custom/dnd", "network", "bluetooth", "wireplumber", "backlight", "battery", "tray"],
+  "modules-right": ["custom/idle", "custom/dnd", "network", "bluetooth", "wireplumber", "backlight", "battery", "tray"],
 
-  // Shown only while on; signal 8 is sent by ~/.local/bin/dnd.
+  // Shown only while on; signals 8/9 are sent by ~/.local/bin/dnd and idle.
   "custom/dnd": { "exec": "~/.local/bin/dnd status", "interval": "once", "signal": 8, "on-click": "~/.local/bin/dnd" },
+  "custom/idle": { "exec": "~/.local/bin/idle status", "interval": "once", "signal": 9, "on-click": "~/.local/bin/idle toggle" },
   "clock": { "format": "{:%a %d %b  %H:%M}" },
   "network": {
     "format-wifi": "  {essid}",
