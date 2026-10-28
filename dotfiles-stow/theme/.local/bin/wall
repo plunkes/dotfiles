@@ -68,7 +68,9 @@ reload_apps() {
   # Running Neovim instances.
   local sock
   for sock in "${XDG_RUNTIME_DIR:-/run/user/$UID}"/nvim.*.0; do
-    [[ -S "$sock" ]] && nvim --server "$sock" --remote-expr 'luaeval("require(\"config.theme\").reload()")' >/dev/null 2>&1 || true
+    if [[ -S "$sock" ]]; then
+      nvim --server "$sock" --remote-expr 'luaeval("require(\"config.theme\").reload()")' >/dev/null 2>&1 || true
+    fi
   done
   # Spotify picks the colors up on its next start.
   if command -v spicetify &>/dev/null; then spicetify -q refresh &>/dev/null || true; fi
@@ -82,7 +84,9 @@ apply() {
   gen_colors "$img"
   echo "$img" > "$current_file"
   reload_apps
-  command -v notify-send &>/dev/null && notify-send -i "$img" "Wallpaper" "$(basename "$img")" 2>/dev/null || true
+  if command -v notify-send &>/dev/null; then
+    notify-send -i "$img" "Wallpaper" "$(basename "$img")" 2>/dev/null || true
+  fi
 }
 
 case "${1:-}" in
