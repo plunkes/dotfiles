@@ -5,11 +5,5 @@ vt = 1
 
 [default_session]
 user = "greeter"
-command = """tuigreet \
-  --cmd '@SWAY_CMD@' \
-  --time --time-format '%a %d %b  %H:%M' \
-  --remember --remember-user-session \
-  --asterisks --asterisks-char '•' \
-  --greeting 'welcome back' \
-  --width 50 --window-padding 2 --container-padding 2 \
-  --theme 'border=magenta;title=magenta;greet=cyan;text=white;prompt=green;input=yellow;time=cyan;action=blue;button=magenta'"""
+# One line: greetd's config parser has no multi-line strings.
+command = "tuigreet --cmd '@SWAY_CMD@' --time --time-format '%a %d %b  %H:%M' --remember --remember-user-session --asterisks --asterisks-char '•' --greeting 'welcome back' --width 50 --window-padding 2 --container-padding 2 --theme 'border=magenta;title=magenta;greet=cyan;text=white;prompt=green;input=yellow;time=cyan;action=blue;button=magenta'"
