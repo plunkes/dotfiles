@@ -118,6 +118,20 @@ bindsym $mod+Shift+7 move container to workspace number 7
 bindsym $mod+Shift+8 move container to workspace number 8
 bindsym $mod+Shift+9 move container to workspace number 9
 bindsym $mod+Shift+0 move container to workspace number 10
+# Super+Alt+N: same as Super+Shift+N
+bindsym $mod+Mod1+1 move container to workspace number 1
+bindsym $mod+Mod1+2 move container to workspace number 2
+bindsym $mod+Mod1+3 move container to workspace number 3
+bindsym $mod+Mod1+4 move container to workspace number 4
+bindsym $mod+Mod1+5 move container to workspace number 5
+bindsym $mod+Mod1+6 move container to workspace number 6
+bindsym $mod+Mod1+7 move container to workspace number 7
+bindsym $mod+Mod1+8 move container to workspace number 8
+bindsym $mod+Mod1+9 move container to workspace number 9
+bindsym $mod+Mod1+0 move container to workspace number 10
+# Touchpad: 3-finger swipe switches workspace (fingers left = next, like scrolling a page)
+bindgesture swipe:3:left workspace next_on_output
+bindgesture swipe:3:right workspace prev_on_output
 # Move workspace to the external monitor
 bindsym $mod+Ctrl+$left move workspace to output left
 bindsym $mod+Ctrl+$right move workspace to output right
