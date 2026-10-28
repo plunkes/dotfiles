@@ -1,2 +1,0 @@
-prog_aut progs/prog_aut_ws/
-prm_2026 progs/prm_ws/

@@ -44,7 +44,7 @@ if status is-interactive
 
     complete -c venv -f -a "(ls $VENV_HOME)"
     complete -c rmvenv -f -a "(ls $VENV_HOME)"
-    complete -c ros_build -f -a "(cat $HOME/.config/fish/ros_workspaces.txt | string split ' ')[1]" -d "Workspace ROS"
+    complete -c ros_build -f -a "(cat $HOME/.config/fish/ros_workspaces.txt 2>/dev/null | string split ' ')[1]" -d "ROS workspace"
 
     if test "$CONTAINER_ID" = ros-jazzy
         if test -f /opt/ros/jazzy/setup.bash
@@ -59,5 +59,3 @@ if status is-interactive
     command -v fnm &>/dev/null && fnm env --use-on-cd --shell fish | source
 end
 
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f "$HOME/google-cloud-sdk/path.fish.inc" ]; . "$HOME/google-cloud-sdk/path.fish.inc"; end

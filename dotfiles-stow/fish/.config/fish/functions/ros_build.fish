@@ -29,7 +29,7 @@ function ros_build -d "Compiles and sources a ros workspace :D"
         end
     else
         echo "The path informed for this workspace does not exist :O"
-        echo "Debug: Tentando acessar o caminho |$ws_path|"
+        echo "Debug: tried to access |$ws_path|"
         return 1
     end
 end

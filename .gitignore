@@ -1,3 +1,4 @@
 .claude/
 dotfiles-stow/fish/.config/fish/conf.d/local.fish
 dotfiles-stow/fish/.config/fish/fish_variables
+dotfiles-stow/fish/.config/fish/ros_workspaces.txt
