@@ -62,7 +62,7 @@ echo 'set -gx VPN_USER <id>' > ~/.config/fish/conf.d/local.fish
 | Bluetooth | `hw/bluetooth.txt` + service |
 | Btrfs / ext4 root | matching swapfile method; `hw/btrfs.txt` (btrfs-progs) on Btrfs |
 
-What can't be detected goes in `hosts/<hostname>.conf` (keyboard, charge limit, swap, extra packages; see `hosts/default.conf`) and optionally `hosts/<hostname>.kanshi` (monitor layout). No file = defaults. Force a profile with `HOST=name ./install.sh`.
+What can't be detected goes in `hosts/<hostname>.conf` (keyboard, screen scale, charge limit, swap, extra packages; see `hosts/default.conf`) and optionally `hosts/<hostname>.kanshi` (monitor layout). No file = defaults. Force a profile with `HOST=name ./install.sh`.
 
 **NVIDIA:** installs `nvidia-open` (GTX 16xx / RTX 20xx or newer) and starts Sway with `--unsupported-gpu`. Sway doesn't officially support the proprietary driver; expect occasional glitches.
 

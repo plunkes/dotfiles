@@ -35,6 +35,7 @@ input type:keyboard {
     xkb_options "$KB_OPTIONS"
 }
 EOF
+if [[ -n $OUTPUT_SCALE ]]; then echo "output * scale $OUTPUT_SCALE" >> "$HOME/.config/sway/host.conf"; fi
 if [[ -f "$REPO_DIR/hosts/$HOST_PROFILE.kanshi" ]]; then
   cp "$REPO_DIR/hosts/$HOST_PROFILE.kanshi" "$HOME/.config/kanshi/config"
 fi
