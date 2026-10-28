@@ -145,3 +145,4 @@ zram-generator
 
 # --- apps ---
 librewolf
+discord
