@@ -11,7 +11,7 @@ window#waybar { background: alpha(@bg, 0.92); color: @fg; }
 #workspaces button { padding: 0 8px; color: @muted; }
 #workspaces button.focused { color: @on_accent; background: @accent; }
 #workspaces button.urgent { color: @bg; background: @critical; }
-#clock, #network, #bluetooth, #wireplumber, #backlight, #battery, #tray { padding: 0 10px; }
+#custom-dnd, #clock, #network, #bluetooth, #wireplumber, #backlight, #battery, #tray { padding: 0 10px; }
 #clock { color: @accent; }
 #battery.warning { color: @warning; }
 #battery.critical { color: @critical; }

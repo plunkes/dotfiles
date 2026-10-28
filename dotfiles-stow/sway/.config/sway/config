@@ -66,6 +66,8 @@ bindsym $mod+w exec librewolf
 bindsym $mod+o exec logseq
 bindsym $mod+m exec spotify
 bindsym $mod+Escape exec $lock
+# Notifications on/off (do-not-disturb)
+bindsym $mod+n exec ~/.local/bin/dnd
 # Wallpaper: picker / next / random (recolors everything)
 bindsym $mod+Shift+w exec kitty --class wall-picker -e ~/.local/bin/wall
 bindsym $mod+Shift+n exec ~/.local/bin/wall next

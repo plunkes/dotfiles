@@ -13,3 +13,6 @@ default-timeout=5000
 [urgency=high]
 border-color={{colors.error.default.hex}}
 default-timeout=0
+
+[mode=do-not-disturb]
+invisible=1

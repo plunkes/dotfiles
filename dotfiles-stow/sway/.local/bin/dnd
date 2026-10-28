@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# dnd — do-not-disturb: hide mako notifications (they still pile up in history).
+#
+#   dnd          toggle (Super+n, or click the waybar icon)
+#   dnd status   waybar module: an icon while on, nothing while off
+set -euo pipefail
+
+mode=do-not-disturb
+on() { makoctl mode | grep -qx "$mode"; }
+
+case "${1:-toggle}" in
+  toggle)
+    makoctl mode -t "$mode" >/dev/null
+    if ! on; then notify-send -t 2000 "Notificações ligadas"; fi
+    pkill -RTMIN+8 waybar || true
+    ;;
+  status) if on; then echo "󰂛"; fi ;;
+  *) echo "usage: dnd [toggle|status]" >&2; exit 1 ;;
+esac
