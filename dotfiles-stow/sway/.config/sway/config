@@ -63,6 +63,8 @@ bindsym $mod+w exec librewolf
 bindsym $mod+o exec logseq
 bindsym $mod+m exec spotify
 bindsym $mod+Escape exec $lock
+# Hibernate (swayidle locks first)
+bindsym $mod+Shift+Escape exec systemctl hibernate
 # Notifications on/off (do-not-disturb)
 bindsym $mod+n exec ~/.local/bin/dnd
 # Keep-awake: no auto lock / screen off (still locks on suspend)
