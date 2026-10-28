@@ -18,6 +18,7 @@ Sway, `Super` = Windows key. Source: [`dotfiles-stow/sway/.config/sway/config`](
 | Keys | Action |
 |---|---|
 | Super + Esc | lock |
+| Super + Shift + Esc | hibernate |
 | Super + n | notifications on/off (waybar shows 󰂛 while off) |
 | Super + a | keep screen on: no auto lock / screen off, still locks on suspend (waybar shows 󰅶) |
 | Super + q | close window |
@@ -41,7 +42,7 @@ Sway, `Super` = Windows key. Source: [`dotfiles-stow/sway/.config/sway/config`](
 
 | Keys | Action |
 |---|---|
-| Super + v / Super + c | next window splits vertical / horizontal |
+| Super + v / Super + c | next window opens below / beside the focused one (grid: mix both) |
 | Super + t | toggle split direction |
 | Super + s | stacking |
 | Super + Shift + t | tabbed |
@@ -52,7 +53,7 @@ Sway, `Super` = Windows key. Source: [`dotfiles-stow/sway/.config/sway/config`](
 |---|---|
 | Super + 1…0 | go to workspace 1…10 |
 | Super + Shift + 1…0 | send window to workspace |
-| Super + Alt + 1…0 | send window to workspace |
+| Super + Alt + 1…0 | send window to workspace and follow it |
 | 3-finger swipe left / right | next / previous workspace |
 | Super + Ctrl + h / l | move workspace to the monitor on the left / right |
 
