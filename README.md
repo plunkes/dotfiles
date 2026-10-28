@@ -81,9 +81,23 @@ docs/           extra notes
 
 Edit a config in `dotfiles-stow/` — it is symlinked, so changes are live.
 
+## Shortcuts
+
+| Keys | Action |
+|---|---|
+| Super + Enter / d / e | Kitty / launcher / yazi |
+| Super + w / o / m | LibreWolf / Logseq / Spotify |
+| Super + Esc / n / a | lock / notifications on-off / keep screen on |
+| Super + 1…0 | workspace; + Shift or + Alt sends the window |
+| 3-finger swipe | next / previous workspace |
+| Super + h j k l | focus; + Shift moves the window |
+| Super + Shift + w / n / r | wallpaper picker / next / random |
+
+Full list: [docs/SHORTCUTS.md](docs/SHORTCUTS.md).
+
 ## Wallpaper + colors
 
-`wall` sets the wallpaper ([awww](https://codeberg.org/LGFae/awww)) and regenerates colors with [matugen](https://github.com/InioX/matugen) for kitty, sway, waybar, fuzzel, mako, GTK, Neovim and Spotify.
+`wall` sets the wallpaper ([awww](https://codeberg.org/LGFae/awww)) and regenerates colors with [matugen](https://github.com/InioX/matugen) for kitty, sway, waybar, fuzzel, mako, hyprlock, GTK, Neovim and Spotify.
 
 ```bash
 wall            # picker with previews (Super+Shift+w)

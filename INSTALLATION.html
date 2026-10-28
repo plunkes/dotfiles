@@ -79,6 +79,7 @@ $EDITOR ~/.config/fish/conf.d/local.fish   # machine-only vars, not tracked</cod
 
   <tr><td>Boot</td><td><a href="https://www.gnu.org/software/grub/manual/grub/html_node/Theme-file-format.html">GRUB</a></td><td>Themeable; own pixel-art theme kept in the repo</td></tr>
   <tr><td>Login</td><td><a href="https://github.com/apognu/tuigreet">greetd + tuigreet</a></td><td>Tiny TUI greeter, themable colors, remembers user and session</td></tr>
+  <tr><td>Lock</td><td><a href="https://wiki.hypr.land/Hypr-Ecosystem/hyprlock/">hyprlock</a></td><td>Blurred wallpaper, typed password as centered *; runs on sway via ext-session-lock</td></tr>
   <tr><td>WM</td><td><a href="https://github.com/swaywm/sway/wiki">Sway</a></td><td>i3 keys and config on Wayland; stable, few surprises</td></tr>
   <tr><td>Bar</td><td><a href="https://github.com/Alexays/Waybar/wiki">Waybar</a></td><td>Sway workspaces, battery, network, audio in one bar</td></tr>
   <tr><td>Launcher</td><td><a href="https://codeberg.org/dnkl/fuzzel">fuzzel</a></td><td>Fast Wayland launcher, already configured</td></tr>
@@ -134,14 +135,19 @@ $EDITOR ~/.config/fish/conf.d/local.fish   # machine-only vars, not tracked</cod
 </table></div>
 
 <h2>Sway keys</h2>
+<p>Full list: <a href="docs/SHORTCUTS.md">docs/SHORTCUTS.md</a></p>
 <div class="table"><table>
-  <tr><td>Super + Enter</td><td>Kitty</td><td>Super + d — launcher · Super + e — yazi · Super + b — browser</td></tr>
-  <tr><td>Super + h j k l</td><td>focus</td><td>+ Shift moves the window · + Ctrl moves the workspace to another monitor</td></tr>
-  <tr><td>Super + 1…0</td><td>workspace</td><td>+ Shift sends the window</td></tr>
+  <tr><td>Super + Enter</td><td>Kitty</td><td>Super + d — launcher · Super + e — yazi</td></tr>
+  <tr><td>Super + w / o / m</td><td>LibreWolf</td><td>Logseq · Spotify</td></tr>
+  <tr><td>Super + Esc</td><td>lock</td><td>Super + n — notifications on/off · Super + a — keep screen on</td></tr>
+  <tr><td>Super + h j k l</td><td>focus</td><td>+ Shift moves the window · Super + Ctrl + h/l moves the workspace to another monitor</td></tr>
+  <tr><td>Super + 1…0</td><td>workspace</td><td>+ Shift or + Alt sends the window · 3-finger swipe — next / previous</td></tr>
   <tr><td>Super + f / q / r</td><td>fullscreen</td><td>close · resize mode</td></tr>
+  <tr><td>Super + Shift + Space</td><td>floating</td><td>Super + Space — focus tiled/floating · Super + -  — scratchpad</td></tr>
+  <tr><td>Super + v / c / t</td><td>split</td><td>vertical · horizontal · toggle · Super + s — stacking · Super + Shift + t — tabbed</td></tr>
   <tr><td>Print</td><td>screenshot</td><td>region → satty · Shift + Print — full screen</td></tr>
   <tr><td>Super + Shift + w</td><td>wallpaper picker</td><td>Super + Shift + n — next · Super + Shift + r — random</td></tr>
-  <tr><td>Super + Esc</td><td>lock</td><td>Super + Shift + e — exit</td></tr>
+  <tr><td>Super + Shift + c</td><td>reload</td><td>Super + Shift + e — exit</td></tr>
 </table></div>
 
 </main>
