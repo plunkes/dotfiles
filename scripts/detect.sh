@@ -1,3 +1,4 @@
+# shellcheck shell=bash disable=SC2034  # vars are read by the scripts that source this
 # Hardware detection + host profile. Sourced by lib.sh; run directly for a summary:
 #   bash scripts/detect.sh
 # Reads only /proc and /sys, so it works on a bare Arch install.

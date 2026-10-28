@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: shellcheck
+        run: |
+          shellcheck --version
+          shellcheck install.sh scripts/*.sh dotfiles-stow/*/.local/bin/*
+
+      - name: fish syntax
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq fish
+          find dotfiles-stow -name '*.fish' -print0 | xargs -0 -n1 fish --no-execute
+
+      - name: TOML syntax
+        run: |
+          find . -name '*.toml' -not -path './.git/*' -print0 |
+            xargs -0 python3 -c 'import sys, tomllib; [tomllib.load(open(f, "rb")) for f in sys.argv[1:]]'
+
+      - name: Scripts load under set -e
+        run: |
+          for host in $(basename -s .conf hosts/*.conf); do
+            HOST=$host bash -c 'set -euo pipefail; source scripts/lib.sh; package_lists >/dev/null'
+          done
+          bash scripts/detect.sh
