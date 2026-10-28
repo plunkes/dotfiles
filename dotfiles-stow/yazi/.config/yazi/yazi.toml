@@ -1,0 +1,4 @@
+# yazi — only overrides; defaults: https://yazi-rs.github.io/docs/configuration/yazi
+# Launched straight from sway (Super+e), so $EDITOR from fish isn't set: name nvim here.
+[opener]
+edit = [{ run = 'nvim "$@"', block = true, desc = "nvim", for = "unix" }]

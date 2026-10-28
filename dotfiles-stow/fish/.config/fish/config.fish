@@ -1,4 +1,6 @@
 set -gx VENV_HOME ~/progs/libs
+set -gx EDITOR nvim
+set -gx VISUAL nvim
 fish_add_path ~/.local/bin ~/.cargo/bin ~/go/bin ~/.npm-global/bin
 
 # Machine-only secrets/vars (e.g. VPN_USER) go in conf.d/local.fish — not tracked by git.
